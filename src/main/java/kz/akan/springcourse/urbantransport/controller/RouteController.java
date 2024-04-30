@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class RouteController {
-    private RouteRepository routeRepository;
+    private final RouteRepository routeRepository;
     public RouteController(RouteRepository routeRepository) {
         this.routeRepository = routeRepository;
     }

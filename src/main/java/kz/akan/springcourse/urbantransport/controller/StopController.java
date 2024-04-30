@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class StopController {
 
-    private StopRepository stopRepository;
+    private final StopRepository stopRepository;
     public StopController(StopRepository stopRepository) {
         this.stopRepository = stopRepository;
     }

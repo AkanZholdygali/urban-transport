@@ -4,8 +4,6 @@ package kz.akan.springcourse.urbantransport.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "\"TransportType\"")
 @Getter @Setter
