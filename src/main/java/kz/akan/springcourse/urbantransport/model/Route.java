@@ -1,6 +1,7 @@
 package kz.akan.springcourse.urbantransport.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,8 +29,8 @@ public class Route {
             inverseJoinColumns = { @JoinColumn(name = "license_plate_no") })
     private Set<Transport> transports = new HashSet<>();
 
-    @JsonBackReference
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonManagedReference
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "\"StopOnRoute\"",
             joinColumns = { @JoinColumn(name = "route_no") },
             inverseJoinColumns = { @JoinColumn(name = "stop_id") })
