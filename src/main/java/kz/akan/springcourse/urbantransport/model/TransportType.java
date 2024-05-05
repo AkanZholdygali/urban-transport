@@ -4,6 +4,8 @@ package kz.akan.springcourse.urbantransport.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "\"TransportType\"")
 @Getter @Setter
@@ -12,13 +14,13 @@ import lombok.*;
 public class TransportType {
     @Id
     @Column(name = "type_id")
-    private Integer typeId;
+    private Integer id;
 
     @Column(name = "title")
     private String title;
 
     @Column(name = "fare")
-    private String fare;
+    private BigDecimal fare;
 
     @Column(name = "avg_speed")
     private Double avgSpeed;

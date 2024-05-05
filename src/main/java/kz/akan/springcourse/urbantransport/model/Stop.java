@@ -1,6 +1,5 @@
 package kz.akan.springcourse.urbantransport.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,8 +16,7 @@ public class Stop {
     @Column(name = "stop_id")
     private Integer stopId;
 
-    @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "street_id", nullable = false)
     private Street street;
 

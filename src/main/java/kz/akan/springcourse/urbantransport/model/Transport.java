@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "\"Transport\"")
-@Getter @Setter
+@Data
 @NoArgsConstructor @AllArgsConstructor
 public class Transport {
     @Id
