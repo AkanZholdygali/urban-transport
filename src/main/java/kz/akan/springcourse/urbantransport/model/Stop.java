@@ -17,8 +17,8 @@ public class Stop {
     @Column(name = "stop_id")
     private Integer stopId;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "street_id", nullable = false)
     private Street street;
 

@@ -22,7 +22,7 @@ public class Route {
     private TransportType type;
 
     @JsonBackReference
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "\"TransportOnRoute\"",
             joinColumns = { @JoinColumn(name = "route_no") },
             inverseJoinColumns = { @JoinColumn(name = "license_plate_no") })
