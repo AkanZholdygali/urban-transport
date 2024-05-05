@@ -16,7 +16,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "*")
 public class TransportController {
     private final TransportRepository transportRepository;
     private final TransportTypeRepository transportTypeRepository;
