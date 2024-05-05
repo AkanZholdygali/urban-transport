@@ -4,11 +4,14 @@ import kz.akan.springcourse.urbantransport.model.Transport;
 import kz.akan.springcourse.urbantransport.model.TransportType;
 import kz.akan.springcourse.urbantransport.repository.TransportRepository;
 import kz.akan.springcourse.urbantransport.repository.TransportTypeRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -22,8 +25,15 @@ public class TransportController {
     }
 
     @GetMapping("/transports")
-    public List<Transport> getAllTransports() {
-        return transportRepository.findAll();
+    public ResponseEntity<List<Transport>> getAllTransports() {
+        try {
+            List<Transport> transports = transportRepository.findAll();
+
+            if (transports.isEmpty()) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(transports);
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/types")
