@@ -29,7 +29,7 @@ public class Route {
             inverseJoinColumns = { @JoinColumn(name = "license_plate_no") })
     private Set<Transport> transports = new HashSet<>();
 
-    @JsonManagedReference
+    @JsonBackReference
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "\"StopOnRoute\"",
             joinColumns = { @JoinColumn(name = "route_no") },
