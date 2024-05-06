@@ -9,5 +9,12 @@ import java.util.Optional;
 
 @Repository
 public interface TransportRepository extends JpaRepository<Transport, String> {
-    Optional<List<Transport>> findByTypeId(Integer id);
+    List<Transport> findAllByLicensePlateNoContaining(String licensePlateNo);
+    Optional<List<Transport>> findByTypeTitle(String title);
+
+    List<Transport> findByLicensePlateNoContainingIgnoreCaseAndType_Title(String searchText, String typeTitle);
+
+    List<Transport> findByLicensePlateNoContainingIgnoreCase(String searchText);
+
+    List<Transport> findByType_Title(String typeTitle);
 }

@@ -2,12 +2,11 @@ package kz.akan.springcourse.urbantransport.controller;
 
 import kz.akan.springcourse.urbantransport.model.Street;
 import kz.akan.springcourse.urbantransport.repository.StreetRepository;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -21,5 +20,18 @@ public class StreetController {
     @GetMapping("/streets")
     public List<Street> getStreets() {
         return streetRepository.findAll();
+    }
+
+    @GetMapping("/streets/{streetId}")
+    public ResponseEntity<Street> getStreetById(@PathVariable("streetId") Integer streetId) {
+        try {
+            Optional<Street> street = streetRepository.findById(streetId);
+            if (street.isPresent()) {
+                return ResponseEntity.ok(street.get());
+            }
+            return ResponseEntity.notFound().build();
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
