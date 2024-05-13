@@ -6,12 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
 @Setter
 @Embeddable
-public class StopOnRouteId implements java.io.Serializable {
+public class StopOnRouteId implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5964473833625085649L;
     @Column(name = "route_no", nullable = false, length = 50)
     private String routeNo;

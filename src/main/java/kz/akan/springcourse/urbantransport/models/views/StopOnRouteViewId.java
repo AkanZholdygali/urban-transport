@@ -1,4 +1,4 @@
-package kz.akan.springcourse.urbantransport.models;
+package kz.akan.springcourse.urbantransport.models.views;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,4 +1,4 @@
-package kz.akan.springcourse.urbantransport.models;
+package kz.akan.springcourse.urbantransport.models.views;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

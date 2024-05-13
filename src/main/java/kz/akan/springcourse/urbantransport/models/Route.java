@@ -6,8 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,7 +18,7 @@ public class Route {
     @Column(name = "route_no", nullable = false, length = 50)
     private String routeNo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "type_id")
     private TransportType type;
 
@@ -36,11 +34,5 @@ public class Route {
 
     @Column(name = "passengers_day")
     private Double passengersDay;
-
-    @OneToMany(mappedBy = "routeNo")
-    private Set<StopOnRoute> stopOnRoutes = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "routeNo")
-    private Set<Transport> transports = new LinkedHashSet<>();
 
 }

@@ -1,4 +1,4 @@
-package kz.akan.springcourse.urbantransport.models;
+package kz.akan.springcourse.urbantransport.models.views;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,9 +14,12 @@ import org.hibernate.annotations.Immutable;
 @Setter
 @Entity
 @Immutable
-public class StreetView {
+public class StopView {
     @Id
-    @Column(name = "street_id", nullable = false)
+    @Column(name = "stop_id", nullable = false)
+    private Integer stopId;
+
+    @Column(name = "street_id")
     private Integer streetId;
 
     @Column(name = "name", length = 50)

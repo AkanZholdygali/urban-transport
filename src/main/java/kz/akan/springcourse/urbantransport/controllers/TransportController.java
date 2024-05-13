@@ -5,6 +5,7 @@ import kz.akan.springcourse.urbantransport.models.TransportType;
 import kz.akan.springcourse.urbantransport.repositories.RouteRepository;
 import kz.akan.springcourse.urbantransport.repositories.TransportRepository;
 import kz.akan.springcourse.urbantransport.repositories.TransportTypeRepository;
+import kz.akan.springcourse.urbantransport.services.TransportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,88 +15,68 @@ import java.util.*;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class TransportController {
-    private final TransportRepository transportRepository;
-    private final TransportTypeRepository transportTypeRepository;
-    private final RouteRepository routeRepository;
+    private final TransportService transportService;
 
-    public TransportController(TransportRepository transportRepository, TransportTypeRepository transportTypeRepository, RouteRepository routeRepository) {
-        this.transportRepository = transportRepository;
-        this.transportTypeRepository = transportTypeRepository;
-        this.routeRepository = routeRepository;
+    public TransportController(TransportService transportService) {
+        this.transportService = transportService;
     }
 
     @GetMapping("/transports")
     public ResponseEntity<List<Transport>> getAllTransports(@RequestParam(required = false) String searchText, @RequestParam(required = false) String typeTitle) {
         try {
-            List<Transport> transports = new ArrayList<>();
+            List<Transport> transports;
 
             if (searchText != null && !searchText.isEmpty() && typeTitle != null && !typeTitle.isEmpty()) {
-                // Если присутствуют оба параметра, выполняем фильтрацию по обоим
-                transports = transportRepository.findByLicensePlateNoContainingIgnoreCaseAndType_Title(searchText, typeTitle);
+                transports = transportService.getTransportsByLicensePlateNoAndTypeTitle(searchText, typeTitle);
             } else if (searchText != null && !searchText.isEmpty()) {
-                // Если присутствует только searchText, выполняем фильтрацию по нему
-                transports = transportRepository.findByLicensePlateNoContainingIgnoreCase(searchText);
+                transports = transportService.getTransportsByLicensePlateNo(searchText);
             } else if (typeTitle != null && !typeTitle.isEmpty()) {
-                // Если присутствует только typeTitle, выполняем фильтрацию по нему
-                transports = transportRepository.findByType_Title(typeTitle);
+                transports = transportService.getTransportsByTypeTitle(typeTitle);
             } else {
-                // Если ни один из параметров не указан, получаем все транспорты
-                transports = transportRepository.findAll();
+                transports = transportService.getAllTransports();
             }
+
             if (transports.isEmpty()) return ResponseEntity.noContent().build();
             return ResponseEntity.ok(transports);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/transports/{id}")
-    public ResponseEntity<Transport> getTransportById(@PathVariable String id) {
-        Optional<Transport> optionalTransport = transportRepository.findById(id);
-        if (optionalTransport.isEmpty()) return ResponseEntity.notFound().build();
-        else return ResponseEntity.ok(optionalTransport.get());
+    @GetMapping("/{licensePlateNo}")
+    public ResponseEntity<Transport> getTransportById(@PathVariable String licensePlateNo) {
+        Optional<Transport> transport = transportService.getTransportById(licensePlateNo);
+        return transport.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
-    @GetMapping("/types")
-    public List<TransportType> getAllTransportTypes() {
-        return transportTypeRepository.findAll();
-    }
-
-    @GetMapping("/types/{typeTitle}/transports")
-    public ResponseEntity<List<Transport>> getTransportsByType(@PathVariable String  typeTitle) {
-        Optional<List<Transport>> optionalTransports = transportRepository.findByTypeTitle(typeTitle);
-        if (optionalTransports.isPresent()) {
-            return ResponseEntity.ok(optionalTransports.get());
+    @PostMapping("/transports")
+    public ResponseEntity<Transport> createTransport(@RequestBody Transport transport) {
+        try {
+            Transport savedTransport = transportService.saveTransport(transport);
+            return ResponseEntity.ok(savedTransport);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        else return ResponseEntity.notFound().build();
     }
 
-
-    @PutMapping("/transports/{licensePlateNo}")
-    public ResponseEntity<Transport> updateTransport(@PathVariable String licensePlateNo, @RequestBody Transport transport) {
-        Optional<Transport> existingTransport = transportRepository.findById(licensePlateNo);
-        if (existingTransport.isPresent()) {
-            Transport transportToUpdate = existingTransport.get();
-            try {
-                transportToUpdate.setLicensePlateNo(transport.getLicensePlateNo());
-                transportToUpdate.setManufactureYear(transport.getManufactureYear());
-                transportToUpdate.setNumRepairs(transport.getNumRepairs());
-                return ResponseEntity.ok(transportRepository.save(transportToUpdate));
-            }catch (Exception e) {
-                return ResponseEntity.internalServerError().build();
-            }
+    @PutMapping("/{licensePlateNo}")
+    public ResponseEntity<Transport> updateTransport(@PathVariable String licensePlateNo, @RequestBody Transport transportDetails) {
+        try {
+            Transport updatedTransport = transportService.updateTransport(licensePlateNo, transportDetails);
+            return ResponseEntity.ok(updatedTransport);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        else return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/transports/{licensePlateNo}")
-    public ResponseEntity<?> deleteTransport(@PathVariable String licensePlateNo) {
-        Optional<Transport> optionalTransport = transportRepository.findById(licensePlateNo);
-        if (optionalTransport.isPresent()) {
-            transportRepository.delete(optionalTransport.get());
+    @DeleteMapping("/{licensePlateNo}")
+    public ResponseEntity<Void> deleteTransport(@PathVariable String licensePlateNo) {
+        try {
+            transportService.deleteTransport(licensePlateNo);
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        else return ResponseEntity.notFound().build();
     }
+
 }

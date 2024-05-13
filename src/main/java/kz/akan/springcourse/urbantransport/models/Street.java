@@ -21,7 +21,4 @@ public class Street {
     @Column(name = "name", length = 50)
     private String name;
 
-    @OneToMany(mappedBy = "street")
-    private Set<Stop> stops = new LinkedHashSet<>();
-
 }

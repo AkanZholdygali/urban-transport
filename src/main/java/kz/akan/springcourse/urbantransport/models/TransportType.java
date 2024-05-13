@@ -1,5 +1,7 @@
 package kz.akan.springcourse.urbantransport.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,6 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TransportType {
     @Id
     @Column(name = "type_id", columnDefinition = "tinyint not null")
@@ -27,11 +30,5 @@ public class TransportType {
 
     @Column(name = "max_passengers")
     private Integer maxPassengers;
-
-    @OneToMany(mappedBy = "type")
-    private Set<Route> routes = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "type")
-    private Set<Transport> transports = new LinkedHashSet<>();
 
 }

@@ -28,7 +28,4 @@ public class Stop {
     @Column(name = "name", length = 50)
     private String name;
 
-    @OneToMany(mappedBy = "stop")
-    private Set<StopOnRoute> stopOnRoutes = new LinkedHashSet<>();
-
 }

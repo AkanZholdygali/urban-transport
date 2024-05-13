@@ -35,6 +35,18 @@ public class RouteController {
         }
     }
 
+    @PostMapping("/routes")
+    public ResponseEntity<Route> createRoute(@RequestBody Route route) {
+        try {
+            List<Route> routes = routeRepository.findAll();
+            if (routes.contains(route)) return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(routeRepository.save(route));
+
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @DeleteMapping("/routes/{routeNo}")
     public ResponseEntity<?> deleteRoute(@PathVariable String routeNo) {
         Optional<Route> route = routeRepository.findById(routeNo);

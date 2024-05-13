@@ -1,5 +1,6 @@
 package kz.akan.springcourse.urbantransport.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,13 +19,13 @@ public class Transport {
     @Column(name = "license_plate_no", nullable = false, length = 50)
     private String licensePlateNo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ColumnDefault("1")
     @JoinColumn(name = "type_id")
     private TransportType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "route_no")
     private Route routeNo;

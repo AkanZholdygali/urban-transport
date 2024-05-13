@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -18,8 +19,14 @@ public class StreetController {
     }
 
     @GetMapping("/streets")
-    public List<Street> getStreets() {
-        return streetRepository.findAll();
+    public ResponseEntity<List<Street>> getAllStreets() {
+        try {
+            List<Street> streets = streetRepository.findAll();
+            if (streets.isEmpty()) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(streets);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/streets/{streetId}")
