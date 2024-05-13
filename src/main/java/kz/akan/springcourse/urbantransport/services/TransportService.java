@@ -35,7 +35,7 @@ public class TransportService {
                     transport.setNumRepairs(transportDetails.getNumRepairs());
                     transport.setIsFunctional(transportDetails.getIsFunctional());
                     transport.setType(transportDetails.getType());
-                    transport.setRouteNo(transportDetails.getRouteNo());
+                    transport.setRoute(transportDetails.getRoute());
                     return transportRepository.save(transport);
                 }).orElseThrow(() -> new RuntimeException("Transport not found"));
     }

@@ -1,59 +1,67 @@
 package kz.akan.springcourse.urbantransport.controllers;
 
 import kz.akan.springcourse.urbantransport.models.Route;
-import kz.akan.springcourse.urbantransport.repositories.RouteRepository;
+import kz.akan.springcourse.urbantransport.services.RouteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class RouteController {
-    private final RouteRepository routeRepository;
-    public RouteController(RouteRepository routeRepository) {
-        this.routeRepository = routeRepository;
+
+    private final RouteService routeService;
+
+    public RouteController(RouteService routeService) {
+        this.routeService = routeService;
     }
 
     @GetMapping("/routes")
-    public List<Route> getAllRoutes() {
-        return routeRepository.findAll();
+    public ResponseEntity<List<Route>> getAllRoutes() {
+        try {
+            List<Route> routes = routeService.getAllRoutes();
+            if (routes.isEmpty()) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(routes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/routes/{routeNo}")
-    public ResponseEntity<Route> getRoute(@PathVariable String routeNo) {
-        try {
-            Optional<Route> route = routeRepository.findById(routeNo);
-            if (route.isPresent()) {
-                return ResponseEntity.ok(route.get());
-            }
-            return ResponseEntity.notFound().build();
-        }catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Route> getRouteById(@PathVariable String routeNo) {
+        Optional<Route> route = routeService.getRouteById(routeNo);
+        return route.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/routes")
     public ResponseEntity<Route> createRoute(@RequestBody Route route) {
         try {
-            List<Route> routes = routeRepository.findAll();
-            if (routes.contains(route)) return ResponseEntity.badRequest().build();
-            return ResponseEntity.ok(routeRepository.save(route));
-
-        }catch (Exception e) {
+            Route savedRoute = routeService.saveRoute(route);
+            return ResponseEntity.ok(savedRoute);
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @DeleteMapping("/routes/{routeNo}")
-    public ResponseEntity<?> deleteRoute(@PathVariable String routeNo) {
-        Optional<Route> route = routeRepository.findById(routeNo);
-        if (route.isPresent()) {
-            routeRepository.delete(route.get());
-            return ResponseEntity.ok().build();
+    @PutMapping("/routes/{routeNo}")
+    public ResponseEntity<Route> updateRoute(@PathVariable String routeNo, @RequestBody Route routeDetails) {
+        try {
+            Route updatedRoute = routeService.updateRoute(routeNo, routeDetails);
+            return ResponseEntity.ok(updatedRoute);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{routeNo}")
+    public ResponseEntity<Void> deleteRoute(@PathVariable String routeNo) {
+        try {
+            routeService.deleteRoute(routeNo);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

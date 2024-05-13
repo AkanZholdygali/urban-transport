@@ -27,7 +27,7 @@ public class Transport {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "route_no")
-    private Route routeNo;
+    private Route route;
 
     @Column(name = "num_repairs")
     private Integer numRepairs;
