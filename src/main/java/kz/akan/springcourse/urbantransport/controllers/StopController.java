@@ -1,8 +1,8 @@
-package kz.akan.springcourse.urbantransport.controller;
+package kz.akan.springcourse.urbantransport.controllers;
 
 
-import kz.akan.springcourse.urbantransport.model.Stop;
-import kz.akan.springcourse.urbantransport.repository.StopRepository;
+import kz.akan.springcourse.urbantransport.models.Stop;
+import kz.akan.springcourse.urbantransport.repositories.StopRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,5 +35,15 @@ public class StopController {
         }catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @DeleteMapping("/stops/{stopId}")
+    public ResponseEntity<?> deleteStopById(@PathVariable Integer stopId) {
+        Optional<Stop> stop = stopRepository.findById(stopId);
+        if (stop.isPresent()) {
+            stopRepository.delete(stop.get());
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

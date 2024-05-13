@@ -1,15 +1,14 @@
-package kz.akan.springcourse.urbantransport.controller;
+package kz.akan.springcourse.urbantransport.controllers;
 
-import kz.akan.springcourse.urbantransport.model.Transport;
-import kz.akan.springcourse.urbantransport.model.TransportType;
-import kz.akan.springcourse.urbantransport.repository.TransportRepository;
-import kz.akan.springcourse.urbantransport.repository.TransportTypeRepository;
+import kz.akan.springcourse.urbantransport.models.Transport;
+import kz.akan.springcourse.urbantransport.models.TransportType;
+import kz.akan.springcourse.urbantransport.repositories.RouteRepository;
+import kz.akan.springcourse.urbantransport.repositories.TransportRepository;
+import kz.akan.springcourse.urbantransport.repositories.TransportTypeRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -17,10 +16,12 @@ import java.util.Optional;
 public class TransportController {
     private final TransportRepository transportRepository;
     private final TransportTypeRepository transportTypeRepository;
+    private final RouteRepository routeRepository;
 
-    public TransportController(TransportRepository transportRepository, TransportTypeRepository transportTypeRepository) {
+    public TransportController(TransportRepository transportRepository, TransportTypeRepository transportTypeRepository, RouteRepository routeRepository) {
         this.transportRepository = transportRepository;
         this.transportTypeRepository = transportTypeRepository;
+        this.routeRepository = routeRepository;
     }
 
     @GetMapping("/transports")
@@ -70,20 +71,6 @@ public class TransportController {
         else return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/transports")
-    public ResponseEntity<?> createTransport(@RequestBody Transport transport) {
-        try {
-            Optional<Transport> existingTransport = transportRepository.findById(transport.getLicensePlateNo());
-            if (existingTransport.isPresent()) {
-                return ResponseEntity.badRequest().build();
-            } else {
-                transportRepository.save(transport);
-                return ResponseEntity.ok().build();
-            }
-        }catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
     @PutMapping("/transports/{licensePlateNo}")
     public ResponseEntity<Transport> updateTransport(@PathVariable String licensePlateNo, @RequestBody Transport transport) {

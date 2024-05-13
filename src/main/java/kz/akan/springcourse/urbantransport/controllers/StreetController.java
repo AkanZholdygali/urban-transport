@@ -1,7 +1,7 @@
-package kz.akan.springcourse.urbantransport.controller;
+package kz.akan.springcourse.urbantransport.controllers;
 
-import kz.akan.springcourse.urbantransport.model.Street;
-import kz.akan.springcourse.urbantransport.repository.StreetRepository;
+import kz.akan.springcourse.urbantransport.models.Street;
+import kz.akan.springcourse.urbantransport.repositories.StreetRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

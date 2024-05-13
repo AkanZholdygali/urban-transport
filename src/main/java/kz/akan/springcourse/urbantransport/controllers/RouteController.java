@@ -1,7 +1,7 @@
-package kz.akan.springcourse.urbantransport.controller;
+package kz.akan.springcourse.urbantransport.controllers;
 
-import kz.akan.springcourse.urbantransport.model.Route;
-import kz.akan.springcourse.urbantransport.repository.RouteRepository;
+import kz.akan.springcourse.urbantransport.models.Route;
+import kz.akan.springcourse.urbantransport.repositories.RouteRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,15 +37,11 @@ public class RouteController {
 
     @DeleteMapping("/routes/{routeNo}")
     public ResponseEntity<?> deleteRoute(@PathVariable String routeNo) {
-        try {
-            Optional<Route> route = routeRepository.findById(routeNo);
-            if (route.isPresent()) {
-                routeRepository.delete(route.get());
-                return ResponseEntity.ok().build();
-            }
-            return ResponseEntity.notFound().build();
-        }catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+        Optional<Route> route = routeRepository.findById(routeNo);
+        if (route.isPresent()) {
+            routeRepository.delete(route.get());
+            return ResponseEntity.ok().build();
         }
+        return ResponseEntity.notFound().build();
     }
 }
