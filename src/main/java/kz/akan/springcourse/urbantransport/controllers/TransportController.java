@@ -1,10 +1,6 @@
 package kz.akan.springcourse.urbantransport.controllers;
 
 import kz.akan.springcourse.urbantransport.models.Transport;
-import kz.akan.springcourse.urbantransport.models.TransportType;
-import kz.akan.springcourse.urbantransport.repositories.RouteRepository;
-import kz.akan.springcourse.urbantransport.repositories.TransportRepository;
-import kz.akan.springcourse.urbantransport.repositories.TransportTypeRepository;
 import kz.akan.springcourse.urbantransport.services.TransportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -33,10 +32,7 @@ public class StreetController {
     public ResponseEntity<Street> getStreetById(@PathVariable("streetId") Integer streetId) {
         try {
             Optional<Street> street = streetRepository.findById(streetId);
-            if (street.isPresent()) {
-                return ResponseEntity.ok(street.get());
-            }
-            return ResponseEntity.notFound().build();
+            return street.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         }catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
