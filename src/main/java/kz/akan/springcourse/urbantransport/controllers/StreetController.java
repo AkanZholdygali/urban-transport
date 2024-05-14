@@ -21,9 +21,14 @@ public class StreetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Street>> getAllStreets() {
+    public ResponseEntity<List<Street>> getAllStreets(@RequestParam(required = false) String searchText) {
         try {
-            List<Street> streets = streetService.getAllStreets();
+            List<Street> streets;
+            if (searchText != null && !searchText.isEmpty()) {
+                streets = streetService.searchStreets(searchText);
+            } else {
+                streets = streetService.getAllStreets();
+            }
             if (streets.isEmpty()) return ResponseEntity.noContent().build();
             return ResponseEntity.ok(streets);
         } catch (Exception e) {

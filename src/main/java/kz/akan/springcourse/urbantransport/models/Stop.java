@@ -17,7 +17,7 @@ public class Stop {
     @Column(name = "stop_id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "street_id")
     private Street street;

@@ -2,6 +2,8 @@ package kz.akan.springcourse.urbantransport.services;
 
 import kz.akan.springcourse.urbantransport.models.Stop;
 import kz.akan.springcourse.urbantransport.repositories.StopRepository;
+import kz.akan.springcourse.urbantransport.specifications.StopSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,5 +41,12 @@ public class StopService {
 
     public void deleteStop(Integer id) {
         stopRepository.deleteById(id);
+    }
+
+    public List<Stop> searchStops(String searchText) {
+        Specification<Stop> specification = Specification
+                .where(StopSpecification.hasNameContaining(searchText))
+                .or(StopSpecification.hasStreetNameContaining(searchText));
+        return stopRepository.findAll(specification);
     }
 }

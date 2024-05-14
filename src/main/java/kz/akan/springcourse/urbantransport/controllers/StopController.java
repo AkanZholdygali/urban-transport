@@ -20,9 +20,14 @@ public class StopController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Stop>> getAllStops() {
+    public ResponseEntity<List<Stop>> getAllStops(@RequestParam(required = false) String searchText) {
         try {
-            List<Stop> stops = stopService.getAllStops();
+            List<Stop> stops;
+            if (searchText != null && !searchText.isEmpty()) {
+                stops = stopService.searchStops(searchText);
+            } else {
+                stops = stopService.getAllStops();
+            }
             if (stops.isEmpty()) return ResponseEntity.noContent().build();
             return ResponseEntity.ok(stops);
         } catch (Exception e) {

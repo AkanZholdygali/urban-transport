@@ -2,6 +2,8 @@ package kz.akan.springcourse.urbantransport.services;
 
 import kz.akan.springcourse.urbantransport.models.Street;
 import kz.akan.springcourse.urbantransport.repositories.StreetRepository;
+import kz.akan.springcourse.urbantransport.specifications.StreetSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,5 +40,10 @@ public class StreetService {
 
     public void deleteStreet(Integer id) {
         streetRepository.deleteById(id);
+    }
+
+    public List<Street> searchStreets(String searchText) {
+        Specification<Street> specification = StreetSpecification.hasNameContaining(searchText);
+        return streetRepository.findAll(specification);
     }
 }
