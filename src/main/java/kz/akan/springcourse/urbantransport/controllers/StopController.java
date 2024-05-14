@@ -1,8 +1,7 @@
 package kz.akan.springcourse.urbantransport.controllers;
 
-
 import kz.akan.springcourse.urbantransport.models.Stop;
-import kz.akan.springcourse.urbantransport.repositories.StopRepository;
+import kz.akan.springcourse.urbantransport.services.StopService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,40 +9,60 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
-@CrossOrigin("*")
+@RequestMapping("/api/stops")
+@CrossOrigin(origins = "*")
 public class StopController {
 
-    private final StopRepository stopRepository;
-    public StopController(StopRepository stopRepository) {
-        this.stopRepository = stopRepository;
+    private final StopService stopService;
+
+    public StopController(StopService stopService) {
+        this.stopService = stopService;
     }
 
-    @GetMapping("/stops")
-    public List<Stop> getAllStops() {
-        return stopRepository.findAll();
-    }
-
-    @GetMapping("/stops/{stopId}")
-    public ResponseEntity<Stop> getStopById(@PathVariable Integer stopId) {
+    @GetMapping
+    public ResponseEntity<List<Stop>> getAllStops() {
         try {
-            Optional<Stop> stop = stopRepository.findById(stopId);
-            if (stop.isPresent()) {
-                return ResponseEntity.ok(stop.get());
-            }
-            return ResponseEntity.notFound().build();
-        }catch (Exception e) {
+            List<Stop> stops = stopService.getAllStops();
+            if (stops.isEmpty()) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(stops);
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @DeleteMapping("/stops/{stopId}")
-    public ResponseEntity<?> deleteStopById(@PathVariable Integer stopId) {
-        Optional<Stop> stop = stopRepository.findById(stopId);
-        if (stop.isPresent()) {
-            stopRepository.delete(stop.get());
-            return ResponseEntity.ok().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Stop> getStopById(@PathVariable Integer id) {
+        Optional<Stop> stop = stopService.getStopById(id);
+        return stop.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Stop> createStop(@RequestBody Stop stop) {
+        try {
+            Stop savedStop = stopService.saveStop(stop);
+            return ResponseEntity.ok(savedStop);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Stop> updateStop(@PathVariable Integer id, @RequestBody Stop stopDetails) {
+        try {
+            Stop updatedStop = stopService.updateStop(id, stopDetails);
+            return ResponseEntity.ok(updatedStop);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStop(@PathVariable Integer id) {
+        try {
+            stopService.deleteStop(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

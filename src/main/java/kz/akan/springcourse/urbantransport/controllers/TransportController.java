@@ -18,20 +18,15 @@ public class TransportController {
     }
 
     @GetMapping("/transports")
-    public ResponseEntity<List<Transport>> getAllTransports(@RequestParam(required = false) String searchText, @RequestParam(required = false) String typeTitle) {
+    public ResponseEntity<List<Transport>> getAllTransports(
+            @RequestParam(required = false) String searchText,
+            @RequestParam(required = false) Boolean busChecked,
+            @RequestParam(required = false) Boolean trolleybusChecked,
+            @RequestParam(required = false) Integer fromYear,
+            @RequestParam(required = false) Integer toYear,
+            @RequestParam(required = false) Boolean functional) {
         try {
-            List<Transport> transports;
-
-            if (searchText != null && !searchText.isEmpty() && typeTitle != null && !typeTitle.isEmpty()) {
-                transports = transportService.getTransportsByLicensePlateNoAndTypeTitle(searchText, typeTitle);
-            } else if (searchText != null && !searchText.isEmpty()) {
-                transports = transportService.getTransportsByLicensePlateNo(searchText);
-            } else if (typeTitle != null && !typeTitle.isEmpty()) {
-                transports = transportService.getTransportsByTypeTitle(typeTitle);
-            } else {
-                transports = transportService.getAllTransports();
-            }
-
+            List<Transport> transports = transportService.getTransportsWithFilters(searchText, busChecked, trolleybusChecked, fromYear, toYear, functional);
             if (transports.isEmpty()) return ResponseEntity.noContent().build();
             return ResponseEntity.ok(transports);
         } catch (Exception e) {
@@ -39,7 +34,7 @@ public class TransportController {
         }
     }
 
-    @GetMapping("/{licensePlateNo}")
+    @GetMapping("/transports/{licensePlateNo}")
     public ResponseEntity<Transport> getTransportById(@PathVariable String licensePlateNo) {
         Optional<Transport> transport = transportService.getTransportById(licensePlateNo);
         return transport.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -55,17 +50,18 @@ public class TransportController {
         }
     }
 
-    @PutMapping("/{licensePlateNo}")
+    @PutMapping("/transports/{licensePlateNo}")
     public ResponseEntity<Transport> updateTransport(@PathVariable String licensePlateNo, @RequestBody Transport transportDetails) {
         try {
             Transport updatedTransport = transportService.updateTransport(licensePlateNo, transportDetails);
+            if (updatedTransport == null) return ResponseEntity.notFound().build();
             return ResponseEntity.ok(updatedTransport);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @DeleteMapping("/{licensePlateNo}")
+    @DeleteMapping("/transports/{licensePlateNo}")
     public ResponseEntity<Void> deleteTransport(@PathVariable String licensePlateNo) {
         try {
             transportService.deleteTransport(licensePlateNo);

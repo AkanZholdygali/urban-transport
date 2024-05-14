@@ -2,7 +2,10 @@ package kz.akan.springcourse.urbantransport.services;
 
 import kz.akan.springcourse.urbantransport.models.Transport;
 import kz.akan.springcourse.urbantransport.repositories.TransportRepository;
+import kz.akan.springcourse.urbantransport.specifications.TransportSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,35 +31,30 @@ public class TransportService {
         return transportRepository.save(transport);
     }
 
+    @Transactional
     public Transport updateTransport(String licensePlateNo, Transport transportDetails) {
-        return transportRepository.findById(licensePlateNo)
-                .map(transport -> {
-                    transport.setManufactureYear(transportDetails.getManufactureYear());
-                    transport.setNumRepairs(transportDetails.getNumRepairs());
-                    transport.setIsFunctional(transportDetails.getIsFunctional());
-                    transport.setType(transportDetails.getType());
-                    transport.setRoute(transportDetails.getRoute());
-                    return transportRepository.save(transport);
-                }).orElseThrow(() -> new RuntimeException("Transport not found"));
+        Transport existingTransport = transportRepository.findById(licensePlateNo).orElse(null);
+        if (existingTransport != null) {
+            if (transportRepository.existsById(transportDetails.getLicensePlateNo())) {
+                return null;
+            }
+            deleteTransport(licensePlateNo);
+            return saveTransport(transportDetails);
+        }else
+            return null;
     }
 
     public void deleteTransport(String licensePlateNo) {
         transportRepository.deleteById(licensePlateNo);
     }
 
-    //custom methods
-    public List<Transport> getTransportsByLicensePlateNo(String licensePlateNo) {
-        return transportRepository.findByLicensePlateNoContainingIgnoreCase(licensePlateNo);
+    public List<Transport> getTransportsWithFilters(String searchText, Boolean busChecked, Boolean trolleybusChecked, Integer fromYear, Integer toYear, Boolean functional) {
+        Specification<Transport> specification = Specification
+                .where(TransportSpecification.hasLicensePlateNoContaining(searchText))
+                .and(TransportSpecification.hasTransportTypes(busChecked, trolleybusChecked))
+                .and(TransportSpecification.hasManufactureYearBetween(fromYear, toYear))
+                .and(TransportSpecification.isFunctional(functional));
+        return transportRepository.findAll(specification);
     }
-
-    public List<Transport> getTransportsByTypeTitle(String typeTitle) {
-        return transportRepository.findByType_Title(typeTitle);
-    }
-
-    public List<Transport> getTransportsByLicensePlateNoAndTypeTitle(String licensePlateNo, String typeTitle) {
-        return transportRepository.findByLicensePlateNoContainingIgnoreCaseAndType_Title(licensePlateNo, typeTitle);
-    }
-
-
 }
 

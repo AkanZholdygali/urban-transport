@@ -18,8 +18,9 @@ public class StopOnRoute {
 
     @MapsId("routeNo")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "route_no", nullable = false)
-    private Route routeNo;
+    private Route route;
 
     @MapsId("stopId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -5,6 +5,7 @@ import kz.akan.springcourse.urbantransport.services.RouteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 @RestController
@@ -19,9 +20,14 @@ public class RouteController {
     }
 
     @GetMapping("/routes")
-    public ResponseEntity<List<Route>> getAllRoutes() {
+    public ResponseEntity<List<Route>> getAllRoutes(
+            @RequestParam(required = false) String searchText,
+            @RequestParam(required = false) Boolean busChecked,
+            @RequestParam(required = false) Boolean trolleybusChecked,
+            @RequestParam(required = false) String time) {
         try {
-            List<Route> routes = routeService.getAllRoutes();
+            LocalTime localTime = time != null ? LocalTime.parse(time) : null;
+            List<Route> routes = routeService.getRoutesWithFilters(searchText, busChecked, trolleybusChecked, localTime);
             if (routes.isEmpty()) return ResponseEntity.noContent().build();
             return ResponseEntity.ok(routes);
         } catch (Exception e) {
@@ -49,6 +55,7 @@ public class RouteController {
     public ResponseEntity<Route> updateRoute(@PathVariable String routeNo, @RequestBody Route routeDetails) {
         try {
             Route updatedRoute = routeService.updateRoute(routeNo, routeDetails);
+            if (updatedRoute == null) return ResponseEntity.notFound().build();
             return ResponseEntity.ok(updatedRoute);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

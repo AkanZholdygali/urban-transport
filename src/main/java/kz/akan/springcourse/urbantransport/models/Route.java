@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalTime;
 
@@ -19,6 +21,8 @@ public class Route {
     private String routeNo;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ColumnDefault("1")
     @JoinColumn(name = "type_id")
     private TransportType type;
 

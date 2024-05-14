@@ -2,9 +2,12 @@ package kz.akan.springcourse.urbantransport.services;
 
 import kz.akan.springcourse.urbantransport.models.Route;
 import kz.akan.springcourse.urbantransport.repositories.RouteRepository;
+import kz.akan.springcourse.urbantransport.specifications.RouteSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,22 +34,26 @@ public class RouteService {
 
     @Transactional
     public Route updateRoute(String routeNo, Route routeDetails) {
-        Optional<Route> optionalRoute = routeRepository.findById(routeNo);
-        if (optionalRoute.isPresent()) {
-            Route existingRoute = optionalRoute.get();
-            existingRoute.setRouteNo(routeDetails.getRouteNo());
-            existingRoute.setType(routeDetails.getType());
-            existingRoute.setFirstTrip(routeDetails.getFirstTrip());
-            existingRoute.setLastTrip(routeDetails.getLastTrip());
-            existingRoute.setIntervalMins(routeDetails.getIntervalMins());
-            existingRoute.setPassengersDay(routeDetails.getPassengersDay());
-            return routeRepository.save(existingRoute);
-        } else {
-            throw new RuntimeException("Route not found");
-        }
+        Route existingRoute = routeRepository.findById(routeNo).orElse(null);
+        if (existingRoute != null) {
+            if (routeRepository.existsById(routeDetails.getRouteNo())) {
+                return null;
+            }
+            deleteRoute(routeNo);
+            return saveRoute(routeDetails);
+        }else
+            return null;
     }
 
     public void deleteRoute(String routeNo) {
         routeRepository.deleteById(routeNo);
+    }
+
+    public List<Route> getRoutesWithFilters(String searchText, Boolean busChecked, Boolean trolleybusChecked, LocalTime time) {
+        Specification<Route> specification = Specification
+                .where(RouteSpecification.hasRouteNoContaining(searchText))
+                .and(RouteSpecification.hasTransportTypes(busChecked, trolleybusChecked))
+                .and(RouteSpecification.isWithinTimeRange(time));
+        return routeRepository.findAll(specification);
     }
 }
